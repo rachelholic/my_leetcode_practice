@@ -2,6 +2,7 @@
  * @param {number[]} nums
  * @return {number[][]}
  */
+// https://leetcode.cn/problems/permutations/solutions/857631/dai-ma-sui-xiang-lu-dai-ni-xue-tou-hui-s-mfrp/
 var permute = function(nums) {
     const path = [];
     const answer = [];
