@@ -19,7 +19,7 @@ var lengthOfLongestSubstring = function(s) {
                 set.delete(s[j]);
                 j++;
             }
-            set.add(s[i]);
+            set.add(s[i]);  // while里面把这个元素删了就没有这个元素了，别忘了给加回去
         }
     }
     return maxLength;
