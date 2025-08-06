@@ -18,7 +18,7 @@ var rob = function(nums) {
         console.log(memo);
     }
     
-    return memo[n-1];
+    return memo[n-1]; // 每次迭代时，memo[i]都会根据前两个结果计算出当前的最优解，这样最终memo[n-1]就是考虑所有房子时的最大金额。
 /**
 memo[0]：只有第1个房子时的最大金额（必须抢它）
 memo[1]：前两个房子中的最大金额（抢第一个或第二个中较大的）
