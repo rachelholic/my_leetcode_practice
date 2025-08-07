@@ -24,7 +24,7 @@
  */
 var longestPalindrome = function(s) {
     if(s.length < 2){ //  为空或为1
-        return true;
+        return s;
     }
     let maxLength = 1; // 不能初始化为0，比如ab的最大回文是1，如果初始化为0，永远也不会更新为1，所以maxLength的初始值是1
     let start = 0;
