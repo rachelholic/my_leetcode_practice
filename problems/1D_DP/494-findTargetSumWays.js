@@ -4,7 +4,71 @@
  * @return {number}
  * https://www.bilibili.com/video/BV16Y411v7Y6?spm_id_from=333.788.videopod.sections&vd_source=993a3d489c26a842465b78f604a6e1fa
  */
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+
 var findTargetSumWays = function(nums, target) {
+    const num_sum = nums.reduce((a,b)=> a+b, 0);
+    const n = nums.length;
+    if(Math.abs(target)> num_sum || (num_sum - Math.abs(target))%2 === 1 ) return 0;
+    const neg = (num_sum - Math.abs(target))/2;
+
+    // dp[j] 表示选取若干数字，使其和恰好等于 j 的方案数。
+    // j 的取值范围是 0 到 neg（包括 0 和 neg），所以需要 neg + 1 个位置来存储所有可能的情况。
+    const dp = new Array(neg + 1).fill(0); 
+    dp[0] = 1;
+    for(let i=0;i<=n;i++) {
+        for(let j=neg;j>=nums[i];j--) { // j是剩余背包容量，num[i]是往外拿的物品，只有当剩余容量j比拿出的物品大的时候才能继续进行
+            dp[j] += dp[j-nums[i]];
+        }
+    }
+
+    return dp[neg];
+};
+
+var findTargetSumWays2 = function(nums, target) {
+    let nums_sum = nums.reduce((a,b) => a+b, 0);
+    const n = nums.length;
+    let neg_plus_pos_nums = nums_sum - Math.abs(target);
+    if(neg_plus_pos_nums<0 || neg_plus_pos_nums%2 === 1 ) return 0;
+
+    let neg = neg_plus_pos_nums/2;
+    // dp[i][j]表示从前i个数字中选取若干个数，使其和为j的方案数
+    // i的范围是0到n（共n+1个可能值）
+    // j的范围是0到neg（共neg+1个可能值）
+    const dp = new Array(n+1).fill().map(() => new Array(neg+1).fill(0));
+    dp[0][0] = 1; // 没有任何元素可选，元素和智能为0，那么方案数就只能是1，只有0这一种方案
+
+    for(let i=1;i<=n;i++) {
+        const num = nums[i-1]; // 因为i是从1开始的，但是nums第一个元素下标是0，所以减1
+        for(let j=0;j<=neg;j++){
+            // 对于第i个数字nums[i-1]，有两种选择：
+            //    不选它：dp[i][j] = dp[i-1][j]
+            //    选它（如果j >= nums[i-1]）：dp[i][j] += dp[i-1][j-nums[i-1]]
+            // 最终dp[n][neg]就是使用所有n个数字得到和为neg的方案数，也就是原问题的解。
+
+            // 如果不选这个数，那么当前的和 j 只能由前 i-1 个数组成。
+            // 因此，dp[i][j] = dp[i-1][j]（直接继承前 i-1 个数的方案数）。
+            dp[i][j] = dp[i-1][j]; // j<num，不选 num
+
+            // 如果选择这个数，那么剩下的和必须是 j - nums[i-1]，由前 i-1 个数组成。
+            // 因此，dp[i][j] += dp[i-1][j - nums[i-1]]（加上前 i-1 个数组成 j - nums[i-1] 的方案数）。
+            // 前提条件：j >= nums[i-1]，否则无法选择这个数（因为和不能为负数）。
+            if(j>=num) { // j就相当于背包的剩余容量，num是物品的大小，j>num说明背包还有空间装物品，选 num （即减去num）
+                dp[i][j] += dp[i-1][j-num]
+            }
+        }
+
+    }
+    // dp[n][neg] 表示用所有 n 个数组成 neg 的方案数，即原问题的解。
+    return dp[n][neg];
+};
+
+// 递归
+var findTargetSumWays1 = function(nums, target) {
     // nums是非负数组，但是target可以是负数
     let s = nums.reduce((a, b) => a+b, 0); // 求nums的和
     s -= Math.abs(target); // 所有元素和 减掉 target的绝对值，等于的是添加正负符号的元素相抵消的部份（所以每部份都是s/2），所以一定是偶数，这个s/2作为背包容量
@@ -49,44 +113,3 @@ function dfs(i, c, nums, memo) {
 
     return ans;
 }
-
-
-// 494
-// p：正数1的个数
-// s：所有元素个数
-// s-p：所有负数1的个数
-// target就是：p-(s-p)=t
-// 式子化简：2p=s+t
-// 所以 p=(s+t)/2
-// 问题转化为：从nums选一些数字，使得它们的和恰好等于(s+t)/2的方案数
-// p是整数，还等于(s+t)/2，那么p一定是一个偶数
-// nums[i]是非负数，所以你无论怎么选都无法得到负数
-// 那么s+t是不能为负数的
-
-
-/**
- * @param {number[]} nums
- * @param {number} target
- * @return {number}
- */
-var findTargetSumWays2 = function(nums, target) {
-    let sum = nums.reduce((prev, cur) => prev + cur);
-
-    // 要求到的 target 不能求到
-    // 1、要求到的目标值的绝对值超过了所有数的和
-    // 2、sum + target 是奇数
-    if(Math.abs(target) > sum || (sum + target) % 2 == 1) return 0
-
-    
-    let tempTarget = (sum + target) / 2
-
-    let dp = new Array(tempTarget + 1).fill(0);
-    dp[0] = 1;
-    for(let i = 0; i < nums.length; i++) {
-        for(let j = tempTarget; j >= nums[i]; j--) {
-            dp[j] += dp[j - nums[i]];
-        }
-    }
-
-    return dp[tempTarget]
-};
