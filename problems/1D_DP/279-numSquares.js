@@ -10,8 +10,10 @@ var numSquares = function(n) {
     dp[0] = 0;
     // j是平方根,j*j就是物品，i-j*j就表示往外拿出这个物品之后剩余的背包容量
     for(let i=0; i<=n;i++) {
-        dp[i] = i; // 最坏的情况就是每次+1
+        dp[i] = i; // 最坏的情况就是每次+1（即i个1相加）
+        // 尝试所有可能的完全平方数j*j
         for(let j=1; i-j*j >=0; j++){
+            // 动态转移方程：取当前值和减去j*j后的值加1的最小值
             dp[i] = Math.min(dp[i], dp[i-j*j]+1);
         }
     }
