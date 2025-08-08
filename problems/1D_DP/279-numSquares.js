@@ -1,0 +1,20 @@
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var numSquares = function(n) {
+    // i表示当前和
+    // dp[i]表示和为i的完全平方数的最少数量
+    // dp[n]表示和为n的完全平方数的最少数量
+    const dp = new Array(n+1).fill(Infinity);
+    dp[0] = 0;
+    // j是平方根,j*j就是物品，i-j*j就表示往外拿出这个物品之后剩余的背包容量
+    for(let i=0; i<=n;i++) {
+        dp[i] = i; // 最坏的情况就是每次+1
+        for(let j=1; i-j*j >=0; j++){
+            dp[i] = Math.min(dp[i], dp[i-j*j]+1);
+        }
+    }
+
+    return dp[n];
+};
