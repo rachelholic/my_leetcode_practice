@@ -12,6 +12,7 @@ var coinChange = function(coins, amount) {
     // 递推公式：dp[i] = Math.min(dp[i - coin] + 1, dp[i - coin] + 1, ...)
     // +1 表示 当前使用的这枚硬币，而 dp[i - coin] 表示 剩余金额所需的最少硬币数。两者相加就是使用当前硬币后的总硬币数。
 
+    // Infinity 表示“无法凑出”，这样在 Math.min(dp[i], dp[i - coin] + 1) 时，Infinity 会被更小的可行解替换。
     // 创建一个数组来保存每个金额所需的最小硬币数
     const dp = new Array(amount+1).fill(Infinity);
     // 初始条件：金额为0时需要0个硬币
@@ -23,6 +24,7 @@ var coinChange = function(coins, amount) {
             dp[i] = Math.min(dp[i], dp[i - coin] + 1);
         }
     }
+    
     // 如果dp[amount]仍然是Infinity，说明无法凑出该金额
     return dp[amount] === Infinity ? -1 : dp[amount];  
 };
