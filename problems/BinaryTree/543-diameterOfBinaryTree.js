@@ -25,14 +25,19 @@ var diameterOfBinaryTree = function(root) {
     
     let maxLength = 0;
     function dfs(root) {
+        // 定义叶子高度为0
         if(root === null) {
             return 0;
         }
+        // 左子树的最大深度
         const leftLength = dfs(root.left);
+        // 右子树的最大深度
         const rightLength = dfs(root.right);
 
+        // 更新最大直径（当前节点的最长路径就是 left + right）
         maxLength =  Math.max(maxLength, leftLength+rightLength);
 
+        // 返回当前节点的最大深度（高度），+1是因为需要加上“当前节点自己这一层”
         return Math.max(leftLength, rightLength) + 1; 
     }
 
